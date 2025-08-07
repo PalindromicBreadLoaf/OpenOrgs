@@ -14,137 +14,35 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-// Garbage organisations data (will be replaced with database calls)
-const sampleorganisations = [
-    {
-        id: 1,
-        name: "Computer Science Society",
-        description: "A community for computer science students to learn, collaborate, and network with industry professionals.",
-        category: "academic",
-        members: 156,
-        founded: "2018",
-        contactEmail: "cs.society@university.edu",
-        meetingTime: "Wednesdays 6:00 PM",
-        location: "Engineering Building Room 201",
-        tags: ["programming", "career development"],
-        isActive: true,
-        lastActivity: "2025-01-15"
-    },
-    {
-        id: 2,
-        name: "Cultural Dance Ensemble",
-        description: "Celebrating diversity through traditional and modern dance performances from around the world.",
-        category: "cultural",
-        members: 34,
-        founded: "2020",
-        contactEmail: "dance@university.edu",
-        meetingTime: "Tuesdays & Thursdays 7:00 PM",
-        location: "Student Center Dance Studio",
-        tags: ["dance", "culture", "performance"],
-        isActive: true,
-        lastActivity: "2025-01-12"
-    },
-    {
-        id: 3,
-        name: "Environmental Action Club",
-        description: "Working together to promote sustainability and environmental awareness on campus and beyond.",
-        category: "service",
-        members: 89,
-        founded: "2017",
-        contactEmail: "green@university.edu",
-        meetingTime: "Mondays 5:30 PM",
-        location: "Science Building Room 105",
-        tags: ["environment", "sustainability", "activism"],
-        isActive: true,
-        lastActivity: "2025-01-10"
-    },
-    {
-        id: 4,
-        name: "Photography Club",
-        description: "Capture the world through your lens. Learn techniques, share your work, and explore photography together.",
-        category: "arts",
-        members: 67,
-        founded: "2019",
-        contactEmail: "photo@university.edu",
-        meetingTime: "Saturdays 2:00 PM",
-        location: "Arts Building Studio 3",
-        tags: ["photography", "art", "creativity"],
-        isActive: true,
-        lastActivity: "2025-01-08"
-    },
-    {
-        id: 5,
-        name: "Business Leaders Association",
-        description: "Developing future business leaders through networking, mentorship, and professional development opportunities.",
-        category: "professional",
-        members: 124,
-        founded: "2016",
-        contactEmail: "business@university.edu",
-        meetingTime: "Fridays 4:00 PM",
-        location: "Business Building Conference Room",
-        tags: ["business", "leadership", "networking"],
-        isActive: true,
-        lastActivity: "2025-01-14"
-    },
-    {
-        id: 6,
-        name: "Ultimate Frisbee Club",
-        description: "Fun, competitive ultimate frisbee for all skill levels. Join us for practices, tournaments, and good times!",
-        category: "recreational",
-        members: 43,
-        founded: "2021",
-        contactEmail: "frisbee@university.edu",
-        meetingTime: "Tuesdays & Sundays 3:00 PM",
-        location: "Campus Recreation Fields",
-        tags: ["sports", "fitness", "competition"],
-        isActive: true,
-        lastActivity: "2025-01-11"
-    },
-    {
-        id: 7,
-        name: "Debate Society",
-        description: "Sharpen your critical thinking and public speaking skills through structured debates and competitions.",
-        category: "academic",
-        members: 28,
-        founded: "2019",
-        contactEmail: "debate@university.edu",
-        meetingTime: "Thursdays 6:30 PM",
-        location: "Library Conference Room B",
-        tags: ["debate", "public speaking", "critical thinking"],
-        isActive: true,
-        lastActivity: "2025-01-09"
-    },
-    {
-        id: 8,
-        name: "International Won't Shut Up Association",
-        description: "Who can talk the longest? Find out here!.",
-        category: "cultural",
-        members: 92,
-        founded: "2015",
-        contactEmail: "international@university.edu",
-        meetingTime: "Wednesdays 7:00 PM",
-        location: "International Center",
-        tags: ["international", "culture", "support"],
-        isActive: true,
-        lastActivity: "2025-01-13"
-    }
-];
-
-let currentorganisations = [...sampleorganisations];
-let filteredorganisations = [...sampleorganisations];
+let allOrganisations = [];
+let currentOrganisations = [];
+let filteredOrganisations = [];
 
 function initorganisationsPage() {
-    renderorganisations();
     setupEventListeners();
 
     const searchTerm = getURLParameter('search');
+    const category = document.getElementById('categoryFilter').value;
+
     if (searchTerm) {
         document.getElementById('orgSearch').value = searchTerm;
         performSearch();
+    } else {
+        fetch('http://localhost:3000/api/organisations')
+            .then(res => res.json())
+            .then(data => {
+                allOrganisations = data;
+                currentOrganisations = [...allOrganisations];
+                filteredOrganisations = [...data];
+                applySorting();
+                renderorganisations();
+                updateResultsCount();
+            })
+            .catch(err => {
+                console.error('Error loading organisations:', err);
+                showNotification('Failed to load organisations from server', 'error');
+            });
     }
-
-    updateResultsCount();
 }
 
 function setupEventListeners() {
@@ -174,20 +72,23 @@ function performSearch() {
     const searchTerm = document.getElementById('orgSearch').value.toLowerCase().trim();
     const category = document.getElementById('categoryFilter').value;
 
-    filteredorganisations = sampleorganisations.filter(org => {
-        const matchesSearch = !searchTerm ||
-            org.name.toLowerCase().includes(searchTerm) ||
-            org.description.toLowerCase().includes(searchTerm) ||
-            org.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+    const url = new URL('http://localhost:3000/api/organisations/search');
+    url.searchParams.append('q', searchTerm);
+    url.searchParams.append('category', category);
 
-        const matchesCategory = !category || org.category === category;
-
-        return matchesSearch && matchesCategory;
-    });
-
-    applySorting();
-    renderorganisations();
-    updateResultsCount();
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            filteredOrganisations = data;
+            currentOrganisations = [...data];
+            applySorting();
+            renderorganisations();
+            updateResultsCount();
+        })
+        .catch(err => {
+            console.error('Search failed:', err);
+            showNotification('Search failed', 'error');
+        });
 }
 
 // Yeah, I good programmer
@@ -200,16 +101,16 @@ function applySorting() {
 
     switch(sortBy) {
         case 'name':
-            filteredorganisations.sort((a, b) => a.name.localeCompare(b.name));
+            filteredOrganisations.sort((a, b) => a.name.localeCompare(b.name));
             break;
         case 'members':
-            filteredorganisations.sort((a, b) => b.members - a.members);
+            filteredOrganisations.sort((a, b) => b.members - a.members);
             break;
         case 'newest':
-            filteredorganisations.sort((a, b) => parseInt(b.founded) - parseInt(a.founded));
+            filteredOrganisations.sort((a, b) => parseInt(b.founded) - parseInt(a.founded));
             break;
         case 'active':
-            filteredorganisations.sort((a, b) => new Date(b.lastActivity) - new Date(a.lastActivity));
+            filteredOrganisations.sort((a, b) => new Date(b.lastActivity) - new Date(a.lastActivity));
             break;
     }
 }
@@ -218,7 +119,7 @@ function renderorganisations() {
     const grid = document.getElementById('organisationsGrid');
     const noResults = document.getElementById('noResults');
 
-    if (filteredorganisations.length === 0) {
+    if (filteredOrganisations.length === 0) {
         grid.style.display = 'none';
         noResults.style.display = 'block';
         return;
@@ -227,7 +128,7 @@ function renderorganisations() {
     grid.style.display = 'grid';
     noResults.style.display = 'none';
 
-    grid.innerHTML = filteredorganisations.map(org => createOrganisationsCard(org)).join('');
+    grid.innerHTML = filteredOrganisations.map(org => createOrganisationsCard(org)).join('');
 }
 
 function createOrganisationsCard(org) {
@@ -279,8 +180,8 @@ function createOrganisationsCard(org) {
 }
 
 function updateResultsCount() {
-    const count = filteredorganisations.length;
-    const total = sampleorganisations.length;
+    const count = currentOrganisations.length;
+    const total = allOrganisations.length;
     const resultsCount = document.getElementById('resultsCount');
 
     if (count === total) {
@@ -295,10 +196,35 @@ function clearFilters() {
     document.getElementById('categoryFilter').value = '';
     document.getElementById('sortBy').value = 'name';
 
-    filteredorganisations = [...sampleorganisations];
-    applySorting();
-    renderorganisations();
-    updateResultsCount();
+    fetch('http://localhost:3000/api/organisations')
+        .then(res => res.json())
+        .then(data => {
+            currentOrganisations = data;
+            filteredOrganisations = [...data];
+            applySorting();
+            renderorganisations();
+            updateResultsCount();
+        })
+        .catch(err => {
+            console.error('Error reloading organisations:', err);
+            showNotification('Could not reload organisations', 'error');
+        });
+}
+
+function joinOrganisations(id) {
+    fetch(`http://localhost:3000/api/organisations/${id}/join`, {
+        method: 'POST'
+    })
+        .then(res => {
+            if (res.ok) {
+                showNotification('Join request sent!', 'success');
+            } else {
+                throw new Error('Failed to join');
+            }
+        })
+        .catch(() => {
+            showNotification('Could not join organisation', 'error');
+        });
 }
 
 // Still a placeholder
@@ -308,7 +234,7 @@ function viewOrganisations(id) {
 
 // Join organisations (also a placeholder)
 function joinOrganisations(id) {
-    const org = sampleorganisations.find(o => o.id === id);
+    const org = currentOrganisations.find(o => o.id === id);
     if (org) {
         showNotification(`Join request sent to ${org.name}! You'll be notified when approved.`, 'success');
         // TODO: Make API call to join organisations
