@@ -1,10 +1,100 @@
+<!--
+Copyright (C) 2025  PalindromicBreadLoaf
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenOrgs [Name WIP] - Discover Your Campus Community</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<header>
+    <nav>
+        <a href="index.html" class="logo">OpenOrgs</a>
+        <ul class="nav-links">
+            <li><a href="organizations.html">Organizations</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+            <a href="login.html" class="btn btn-secondary">Login</a>
+            <a href="signup.html" class="btn btn-primary">Sign Up</a>
+        </div>
+    </nav>
+</header>
 
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Discover Your Campus Community</h1>
+            <p>Connect with student organizations, discover events, and build meaningful relationships on campus.</p>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search organizations, events, or interests...">
+                <button class="search-btn">Search</button>
+            </div>
+            <div class="flex justify-center gap-1 mt-1">
+                <a href="organizations.html" class="btn btn-primary">Browse Organizations</a>
+                <a href="events.html" class="btn btn-orange">View Events</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="main-content">
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Find Your Fit</h3>
+                <p>Discover student organizations that match your interests, hobbies, and career goals with our smart search and recommendation system.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Stay Updated</h3>
+                <p>Never miss important events, meetings, or deadlines. Get personalized notifications for organizations you follow.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Connect & Engage</h3>
+                <p>Build lasting relationships with like-minded students and actively participate in campus community life.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Easy Management</h3>
+                <p>For organization leaders: streamline member management, event planning, and communication all in one place.</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Get Connected?</h2>
+            <p>Join hundreds of students who have already found their place on campus through OpenOrgs.</p>
+            <a href="signup.html" class="btn btn-secondary">Get Started Today</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2025 breadloaf. Open Source Student Organization Platform.</p>
+        <p>Built with love... and because Presence is awful.</p>
+    </div>
+</footer>
+
+<script src="scripts.js"></script>
 </body>
 </html>
