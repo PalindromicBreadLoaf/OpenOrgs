@@ -25,7 +25,7 @@ function initSearch() {
             const searchTerm = searchInput.value;
             if (searchTerm.trim()) {
                 // An API? Now why would I use that?
-                window.location.href = `organizations.html?search=${encodeURIComponent(searchTerm)}`;
+                window.location.href = `html/organisations.html?search=${encodeURIComponent(searchTerm)}`;
             }
         });
 
@@ -142,20 +142,20 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'index.html':
         case '':
             break;
-        case 'organizations.html':
-            initOrganizationsPage();
+        case 'html/organisations.html':
+            initOrganisationsPage();
             break;
-        case 'events.html':
+        case 'html/events.html':
             initEventsPage();
             break;
-        case 'login.html':
-        case 'signup.html':
+        case 'html/login.html':
+        case 'html/signup.html':
             initAuthPage();
             break;
     }
 });
 
-function initOrganizationsPage() {
+function initOrganisationsPage() {
     const searchTerm = getURLParameter('search');
     if (searchTerm) {
         const searchInput = document.querySelector('.search-input');

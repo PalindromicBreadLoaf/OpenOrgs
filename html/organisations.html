@@ -1,0 +1,116 @@
+<!--
+Copyright (C) 2025  PalindromicBreadLoaf (herbthehaircut@proton.me)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organisations - OpenOrgs</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="../index.html" class="logo">OpenOrgs</a>
+        <ul class="nav-links">
+            <li><a href="organisations.html">Organisations</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+            <a href="login.html" class="btn btn-secondary">Login</a>
+            <a href="signup.html" class="btn btn-primary">Sign Up</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="page-header">
+        <div class="page-content">
+            <h1>Student Organisations</h1>
+            <p>Discover and connect with student organisations that match your interests</p>
+        </div>
+    </section>
+
+    <section class="page-content">
+        <div class="search-filter-section mb-3">
+            <div class="search-container mb-2">
+                <input type="text" class="search-input" id="orgSearch" placeholder="Search organisations...">
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+
+            <div class="filter-section">
+                <div class="flex gap-1 align-center">
+                    <label for="categoryFilter">Category:</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="academic">Academic</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="recreational">Recreational</option>
+                        <option value="service">Community Service</option>
+                        <option value="professional">Professional</option>
+                        <option value="religious">Religious</option>
+                        <option value="sports">Sports</option>
+                        <option value="arts">Arts</option>
+                    </select>
+
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy" class="filter-select">
+                        <option value="name">Name (A-Z)</option>
+                        <option value="members">Most Members</option>
+                        <option value="newest">Newest</option>
+                        <option value="active">Most Active</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-summary mb-2">
+            <p id="resultsCount">Showing all organisations</p>
+        </div>
+
+        <div class="organisations-grid" id="organisationsGrid">
+            <!-- Organisations *should* be populated here by JavaScript -->
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="text-center">
+                <h3>No organisations found</h3>
+                <p>Try adjusting your search terms or filters</p>
+                <a href="#" class="btn btn-primary" onclick="clearFilters()">Clear Filters</a>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button class="btn btn-secondary" id="loadMoreBtn" style="display: none;">Load More Organisations</button>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2025 OpenOrgs. Open Source Student Organization Platform.</p>
+        <p>Licensed under GPLv3 - Built with love... and because Presence is awful.</p>
+    </div>
+</footer>
+
+<script src="../scripts.js"></script>
+<script src="../js/organisations.js"></script>
+</body>
+</html>
