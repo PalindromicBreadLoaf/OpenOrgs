@@ -18,7 +18,10 @@ let allOrganisations = [];
 let currentOrganisations = [];
 let filteredOrganisations = [];
 
-function initorganisationsPage() {
+let currentPage = 1;
+let pageSize = 9; // Number of orgs per page
+
+function initOrganisationsPage() {
     setupEventListeners();
 
     const searchTerm = getURLParameter('search');
@@ -35,7 +38,8 @@ function initorganisationsPage() {
                 currentOrganisations = [...allOrganisations];
                 filteredOrganisations = [...data];
                 applySorting();
-                renderorganisations();
+                currentPage = 1;
+                renderOrganisations();
                 updateResultsCount();
             })
             .catch(err => {
@@ -82,7 +86,8 @@ function performSearch() {
             filteredOrganisations = data;
             currentOrganisations = [...data];
             applySorting();
-            renderorganisations();
+            currentPage = 1;
+            renderOrganisations();
             updateResultsCount();
         })
         .catch(err => {
@@ -91,7 +96,6 @@ function performSearch() {
         });
 }
 
-// Yeah, I good programmer
 function applyFilters() {
     performSearch();
 }
@@ -115,20 +119,27 @@ function applySorting() {
     }
 }
 
-function renderorganisations() {
+function renderOrganisations() {
     const grid = document.getElementById('organisationsGrid');
     const noResults = document.getElementById('noResults');
 
     if (filteredOrganisations.length === 0) {
         grid.style.display = 'none';
         noResults.style.display = 'block';
+        document.getElementById('paginationControls').innerHTML = '';
         return;
     }
 
     grid.style.display = 'grid';
     noResults.style.display = 'none';
 
-    grid.innerHTML = filteredOrganisations.map(org => createOrganisationsCard(org)).join('');
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageData = filteredOrganisations.slice(start, end);
+
+    grid.innerHTML = pageData.map(org => createOrganisationsCard(org)).join('');
+
+    updatePaginationControls();
 }
 
 function createOrganisationsCard(org) {
@@ -169,7 +180,7 @@ function createOrganisationsCard(org) {
             </div>
             <div class="org-actions">
                 <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); joinOrganisations(${org.id})">
-                    Join Organisations
+                    Join Organisation
                 </button>
                 <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); viewOrganisations(${org.id})">
                     View Details
@@ -191,6 +202,32 @@ function updateResultsCount() {
     }
 }
 
+function updatePaginationControls() {
+    const totalPages = Math.ceil(filteredOrganisations.length / pageSize);
+    const pagination = document.getElementById('paginationControls');
+
+    pagination.innerHTML = `
+        <button class="btn btn-secondary" onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+        <span style="margin: 0 10px;">Page ${currentPage} of ${totalPages}</span>
+        <button class="btn btn-secondary" onclick="nextPage()" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+    `;
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(filteredOrganisations.length / pageSize);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderOrganisations();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderOrganisations();
+    }
+}
+
 function clearFilters() {
     document.getElementById('orgSearch').value = '';
     document.getElementById('categoryFilter').value = '';
@@ -202,7 +239,8 @@ function clearFilters() {
             currentOrganisations = data;
             filteredOrganisations = [...data];
             applySorting();
-            renderorganisations();
+            currentPage = 1;
+            renderOrganisations();
             updateResultsCount();
         })
         .catch(err => {
@@ -211,39 +249,21 @@ function clearFilters() {
         });
 }
 
-function joinOrganisations(id) {
-    fetch(`http://localhost:3000/api/organisations/${id}/join`, {
-        method: 'POST'
-    })
-        .then(res => {
-            if (res.ok) {
-                showNotification('Join request sent!', 'success');
-            } else {
-                throw new Error('Failed to join');
-            }
-        })
-        .catch(() => {
-            showNotification('Could not join organisation', 'error');
-        });
-}
-
-// Still a placeholder
 function viewOrganisations(id) {
     showNotification(`Viewing organisations details for ID: ${id}. I didn't feel like it yet`, 'info');
 }
 
-// Join organisations (also a placeholder)
 function joinOrganisations(id) {
     const org = currentOrganisations.find(o => o.id === id);
     if (org) {
+        // TODO: Don't just blatantly lie
         showNotification(`Join request sent to ${org.name}! You'll be notified when approved.`, 'success');
-        // TODO: Make API call to join organisations
     }
 }
 
-// Override the initorganisationsPage function from scripts.js
-window.initorganisationsPage = initorganisationsPage;
-
 document.addEventListener("DOMContentLoaded", () => {
-    initorganisationsPage();
+    initOrganisationsPage();
 });
+
+// Override init function
+window.initorganisationsPage = initOrganisationsPage;
